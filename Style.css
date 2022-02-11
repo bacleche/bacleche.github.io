@@ -1,0 +1,79 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+ul {
+    list-style-type: none;;
+}
+ul{
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+}
+header {
+    background-color:cornflowerblue;
+    padding: 15px;
+}
+a {
+    text-decoration: none;
+}
+section {
+    margin : 20px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+}
+
+.DroitE {
+    position: inherit;
+    right: 1%;
+    border-radius: 45px;
+}
+.milieu {
+    position: relative;
+    bottom: 600px;
+}
+.GauchE {
+    position: inherit;
+    left: 1%;
+}
+.UnPeuDroite {
+    position: inherit;
+    right: 1%;
+
+}
+.UnPeuGauche{
+    position: inherit;
+    left: 1%;
+    
+}
+footer p {
+    text-align: center;
+}
+h1 {
+    text-align: center;
+}
+.PetiPara {
+    text-align: center;
+}
+form {
+    text-align:center;
+}
+footer {
+    background-color: cornflowerblue;
+    padding-bottom: 115px;
+}
+.ForMDeux {
+    position: relative;
+    top: 35px;
+    margin-bottom:5px;
+}
+#ParaDeux {
+    text-align: center;
+}
+/*
+     Projet : Fishing Test
+    Verson : 1.1
+    Auteur : MOUALOU Schadrac Baclèche
+    ------------||-------------
+*/
