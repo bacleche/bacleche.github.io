@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accueil :: Formation BDD Avancées</title>
+<meta name="description" content="Formation Bases de Données Avancées — L3 — conception UML et optimisation MySQL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <button class="nav-toggle">[ + ] menu du cours</button>
+    <div class="nav-body">
+      <span class="brand">FORMATION<span class="dot">::</span>BDD_AVANCEES</span>
+      <span class="brand-sub">L3 — Université 2i</span>
+
+      <div class="nav-label">// Partie 1 — Conception UML</div>
+      <ul class="nav-list">
+        <li><a href="index.html" class="active">Accueil</a></li>
+        <li><a href="configuration-environnement-bdd.html">Configuration environnement</a></li>
+        <li><a href="tp1-uml-cas-utilisation.html">TP1 — Cas d'utilisation</a></li>
+        <li><a href="tp2-uml-classes.html">TP2 — Diagramme de classes</a></li>
+        <li><a href="tp3-uml-sequence-activite.html">TP3 — Séquence & Activité</a></li>
+        <li><a href="tp4-uml-etats-deploiement.html">TP4 — États & Déploiement</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 2 — Optimisation MySQL</div>
+      <ul class="nav-list">
+        <li><a href="cours-bdd-notions-avancees.html">Bases de données avancées</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 3 — Mise en pratique</div>
+      <ul class="nav-list">
+        <li><a href="projet-sga.html">Projet réel — SGA</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <div class="termbar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="path">guest@2i-bdd<b>:~</b>$<span class="cursor"></span></span>
+    </div>
+    <header class="page-head">
+      <p class="eyebrow">Dashboard principal</p>
+      <h1>Formation Bases de Données Avancées</h1>
+      <p class="subtitle">Conception orientée objet (UML) puis optimisation MySQL — jusqu'à un projet réel déployé. Choisissez un module pour commencer.</p>
+    </header>
+
+
+    <p class="dim">Formation de 4 semaines — diagrammes UML, conception architecturale et bases de données MySQL avancées, jusqu'à un projet réel déployé.</p>
+
+    <h2><span class="num">$</span> ls -la ./modules</h2>
+    <div class="grid-2">
+      <a class="card" href="configuration-environnement-bdd.html">
+        <span class="tag">Prérequis</span>
+        <h3>Configuration environnement</h3>
+        <p>Installer draw.io, PlantUML et MySQL sur Linux et Windows.</p>
+      </a>
+      <a class="card" href="tp1-uml-cas-utilisation.html">
+        <span class="tag">Semaine 1</span>
+        <h3>TP1 — Diagramme de cas d'utilisation</h3>
+        <p>Cadrer le périmètre fonctionnel : acteurs, actions, limites du système.</p>
+      </a>
+      <a class="card" href="tp2-uml-classes.html">
+        <span class="tag">Semaine 1</span>
+        <h3>TP2 — Diagramme de classes</h3>
+        <p>Le diagramme pivot : structure du domaine, futur schéma de BDD.</p>
+      </a>
+      <a class="card" href="tp3-uml-sequence-activite.html">
+        <span class="tag">Semaine 2</span>
+        <h3>TP3 — Séquence &amp; Activité</h3>
+        <p>Dynamique des interactions et logique des processus métier.</p>
+      </a>
+      <a class="card" href="tp4-uml-etats-deploiement.html">
+        <span class="tag">Semaine 2</span>
+        <h3>TP4 — États &amp; Déploiement</h3>
+        <p>Cycle de vie des objets et architecture physique du système.</p>
+      </a>
+      <a class="card" href="cours-bdd-notions-avancees.html">
+        <span class="tag">Semaine 3</span>
+        <h3>Bases de données avancées</h3>
+        <p>Indexation, transactions, procédures, optimisation MySQL.</p>
+      </a>
+      <a class="card" href="projet-sga.html">
+        <span class="tag">Semaine 4</span>
+        <h3>Projet réel — SGA</h3>
+        <p>Système de Gestion Académique : de l'UML au SQL optimisé.</p>
+      </a>
+    </div>
+
+    <h2><span class="num">$</span> cat ./objectifs.md</h2>
+    <div class="panel">
+      <p class="panel-title">Ce que vous saurez faire à la fin</p>
+      <ul>
+        <li>Modéliser un système complet avec les diagrammes UML pertinents — sans en faire trop.</li>
+        <li>Passer d'un diagramme de classes à un schéma relationnel normalisé (MCD → MLD → MPD).</li>
+        <li>Optimiser une base MySQL en production : index, transactions, procédures, requêtes.</li>
+        <li>Livrer un projet réel, de la conception au déploiement.</li>
+      </ul>
+    </div>
+
+    <div class="callout info">
+      <span class="label">Note pédagogique</span>
+      UML n'est pas un obstacle académique — c'est un outil de communication technique. On n'utilise que les diagrammes qui répondent à une vraie question du projet, dans l'ordre où les questions se posent.
+    </div>
+
+
+    <div class="page-nav">
+      <a href="index.html">&laquo; Accueil</a>
+      <a class="next" href="configuration-environnement-bdd.html">Configuration environnement &raquo;</a>
+    </div>
+
+    <footer class="site-footer">
+      <span class="prompt">guest@schadrac-moualou-bacleche-bdd:~$</span> echo "Formation Bases de Données Avancées "
+    </footer>
+  </main>
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>

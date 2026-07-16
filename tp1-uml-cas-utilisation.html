@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP1 — Cas d'utilisation :: Formation BDD Avancées</title>
+<meta name="description" content="Diagramme de cas d'utilisation : acteurs, actions, include/extend, méthode et exercice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <button class="nav-toggle">[ + ] menu du cours</button>
+    <div class="nav-body">
+      <span class="brand">FORMATION<span class="dot">::</span>BDD_AVANCEES</span>
+      <span class="brand-sub">L3 — Université 2i</span>
+
+      <div class="nav-label">// Partie 1 — Conception UML</div>
+      <ul class="nav-list">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="configuration-environnement-bdd.html">Configuration environnement</a></li>
+        <li><a href="tp1-uml-cas-utilisation.html" class="active">TP1 — Cas d'utilisation</a></li>
+        <li><a href="tp2-uml-classes.html">TP2 — Diagramme de classes</a></li>
+        <li><a href="tp3-uml-sequence-activite.html">TP3 — Séquence & Activité</a></li>
+        <li><a href="tp4-uml-etats-deploiement.html">TP4 — États & Déploiement</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 2 — Optimisation MySQL</div>
+      <ul class="nav-list">
+        <li><a href="cours-bdd-notions-avancees.html">Bases de données avancées</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 3 — Mise en pratique</div>
+      <ul class="nav-list">
+        <li><a href="projet-sga.html">Projet réel — SGA</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <div class="termbar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="path">guest@2i-bdd<b>:~/tp1</b>$<span class="cursor"></span></span>
+    </div>
+    <header class="page-head">
+      <p class="eyebrow">Semaine 1 · Partie 1 — Conception UML</p>
+      <h1>Diagramme de cas d'utilisation</h1>
+      <p class="subtitle">Cadrer le périmètre fonctionnel du système avant tout code.</p>
+    </header>
+
+
+    <p class="dim">Premier diagramme du cheminement. On ne code rien, on ne parle même pas encore de classes : on cadre <em>qui</em> utilise le système et <em>pour quoi faire</em>.</p>
+
+    <h2><span class="num">01</span> Pourquoi ce diagramme en premier</h2>
+    <div class="panel">
+      <p class="panel-title">Le problème qu'il résout</p>
+      <p>Sans ce diagramme, un projet démarre souvent par le code — et dérive (scope creep). Le diagramme de cas d'utilisation force à répondre à une seule question avant tout : <strong>quel est le périmètre exact du système ?</strong> Il reste volontairement au niveau métier, sans détail technique.</p>
+    </div>
+
+    <h2><span class="num">02</span> Les éléments</h2>
+    <table>
+      <thead><tr><th>Élément</th><th>Notation</th><th>Signification</th></tr></thead>
+      <tbody>
+        <tr><td>Acteur</td><td>Bonhomme filiforme</td><td>Un rôle externe qui interagit avec le système (utilisateur, autre système, horloge/cron)</td></tr>
+        <tr><td>Cas d'utilisation</td><td>Ellipse</td><td>Une action à valeur métier que le système rend possible</td></tr>
+        <tr><td>Association</td><td>Trait plein</td><td>Relie un acteur à un cas d'utilisation qu'il déclenche</td></tr>
+        <tr><td>&lt;&lt;include&gt;&gt;</td><td>Flèche pointillée</td><td>Un cas d'utilisation en appelle systématiquement un autre</td></tr>
+        <tr><td>&lt;&lt;extend&gt;&gt;</td><td>Flèche pointillée</td><td>Un cas d'utilisation optionnel qui vient en compléter un autre</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="num">03</span> Méthode de construction</h2>
+    <ol>
+      <li>Lister tous les acteurs (humains et systèmes externes).</li>
+      <li>Pour chaque acteur, lister ce qu'il vient <strong>faire</strong> avec le système (verbe d'action, pas de détail technique).</li>
+      <li>Regrouper les actions redondantes entre cas d'utilisation via <code>&lt;&lt;include&gt;&gt;</code>.</li>
+      <li>Identifier les variantes optionnelles via <code>&lt;&lt;extend&gt;&gt;</code>.</li>
+      <li>Dessiner la frontière du système (rectangle) autour des cas d'utilisation.</li>
+    </ol>
+
+    <div class="callout">
+      <span class="label">Piège classique</span>
+      Ne jamais écrire "Se connecter à la base de données" ou "Envoyer une requête API" dans un cas d'utilisation — c'est un détail d'implémentation, pas une action métier. On écrit "S'inscrire à un cours", pas "Insérer une ligne dans la table inscriptions".
+    </div>
+
+    <h2><span class="num">04</span> Exemple — extrait PlantUML</h2>
+    <pre><code>@startuml
+left to right direction
+actor Etudiant
+actor Enseignant
+
+rectangle "Système de Gestion Académique" {
+  usecase "S'inscrire à un cours" as UC1
+  usecase "Consulter ses notes" as UC2
+  usecase "Saisir une note" as UC3
+  usecase "S'authentifier" as UC4
+}
+
+Etudiant --> UC1
+Etudiant --> UC2
+Enseignant --> UC3
+UC1 .> UC4 : &lt;&lt;include&gt;&gt;
+UC2 .> UC4 : &lt;&lt;include&gt;&gt;
+UC3 .> UC4 : &lt;&lt;include&gt;&gt;
+@enduml</code></pre>
+
+    <h2><span class="num">05</span> Exercice pratique</h2>
+    <div class="panel">
+      <p class="panel-title">À rendre en fin de séance</p>
+      <p>Modélisez le diagramme de cas d'utilisation d'une plateforme de covoiturage universitaire : deux acteurs (conducteur, passager), au minimum 5 cas d'utilisation, une relation <code>&lt;&lt;include&gt;&gt;</code> et une relation <code>&lt;&lt;extend&gt;&gt;</code>.</p>
+    </div>
+
+
+    <div class="page-nav">
+      <a href="configuration-environnement-bdd.html">&laquo; Configuration environnement</a>
+      <a class="next" href="tp2-uml-classes.html">TP2 — Diagramme de classes &raquo;</a>
+    </div>
+
+    <footer class="site-footer">
+      <span class="prompt">guest@schadrac-moualou-bacleche-bdd:~$</span> echo "Formation Bases de Données Avancées "
+    </footer>
+  </main>
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>

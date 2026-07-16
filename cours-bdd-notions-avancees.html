@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bases de données avancées :: Formation BDD Avancées</title>
+<meta name="description" content="Normalisation, indexation, transactions, procédures, triggers, optimisation et sécurité MySQL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <button class="nav-toggle">[ + ] menu du cours</button>
+    <div class="nav-body">
+      <span class="brand">FORMATION<span class="dot">::</span>BDD_AVANCEES</span>
+      <span class="brand-sub">L3 — Université 2i</span>
+
+      <div class="nav-label">// Partie 1 — Conception UML</div>
+      <ul class="nav-list">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="configuration-environnement-bdd.html">Configuration environnement</a></li>
+        <li><a href="tp1-uml-cas-utilisation.html">TP1 — Cas d'utilisation</a></li>
+        <li><a href="tp2-uml-classes.html">TP2 — Diagramme de classes</a></li>
+        <li><a href="tp3-uml-sequence-activite.html">TP3 — Séquence & Activité</a></li>
+        <li><a href="tp4-uml-etats-deploiement.html">TP4 — États & Déploiement</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 2 — Optimisation MySQL</div>
+      <ul class="nav-list">
+        <li><a href="cours-bdd-notions-avancees.html" class="active">Bases de données avancées</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 3 — Mise en pratique</div>
+      <ul class="nav-list">
+        <li><a href="projet-sga.html">Projet réel — SGA</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <div class="termbar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="path">guest@2i-bdd<b>:~/bdd-avancees</b>$<span class="cursor"></span></span>
+    </div>
+    <header class="page-head">
+      <p class="eyebrow">Semaine 3 · Partie 2 — Optimisation MySQL</p>
+      <h1>Bases de données avancées — MySQL</h1>
+      <p class="subtitle">Du schéma correct au schéma performant : index, transactions, procédures et optimisation de requêtes.</p>
+    </header>
+
+
+    <p class="dim">Une fois le diagramme de classes acquis, on passe à l'implémentation optimisée. Cette partie transforme un schéma correct en schéma performant et sûr en production.</p>
+
+    <h2><span class="num">01</span> Du diagramme de classes au schéma physique</h2>
+    <table>
+      <thead><tr><th>Étape</th><th>Nom</th><th>Contenu</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>MCD</td><td>Modèle Conceptuel de Données — entités et associations, dérivé du diagramme de classes</td></tr>
+        <tr><td>2</td><td>MLD</td><td>Modèle Logique de Données — tables, clés primaires/étrangères</td></tr>
+        <tr><td>3</td><td>MPD</td><td>Modèle Physique de Données — types SQL réels, contraintes, index</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="num">02</span> Normalisation (révision rapide)</h2>
+    <ul>
+      <li><strong>1FN</strong> — chaque colonne contient une valeur atomique (pas de liste, pas de valeurs multiples).</li>
+      <li><strong>2FN</strong> — pas de dépendance partielle à une partie seulement de la clé primaire composée.</li>
+      <li><strong>3FN</strong> — pas de dépendance transitive entre colonnes non-clés.</li>
+      <li><strong>BCNF</strong> — version renforcée de la 3FN pour les cas de clés candidates multiples.</li>
+    </ul>
+    <div class="callout">
+      <span class="label">Exercice type</span>
+      Donner une table mal conçue (ex : <code>Inscription(etudiant_nom, etudiant_email, cours_titre, enseignant_nom)</code>) et faire identifier les anomalies de mise à jour avant de la décomposer.
+    </div>
+
+    <h2><span class="num">03</span> Indexation</h2>
+    <pre><code>-- Index simple
+CREATE INDEX idx_etudiant_email ON etudiant(email);
+
+-- Index composite (ordre des colonnes = important)
+CREATE INDEX idx_inscription_etudiant_cours ON inscription(etudiant_id, cours_id);
+
+-- Voir le plan d'exécution
+EXPLAIN ANALYZE
+SELECT * FROM inscription WHERE etudiant_id = 12 AND cours_id = 4;</code></pre>
+    <p class="dim">Point clé à enseigner : un index composite <code>(a, b)</code> sert aussi les requêtes filtrant sur <code>a</code> seul, mais pas celles filtrant sur <code>b</code> seul.</p>
+
+    <h2><span class="num">04</span> Transactions (ACID)</h2>
+    <pre><code>START TRANSACTION;
+
+UPDATE compte SET solde = solde - 5000 WHERE id = 1;
+UPDATE compte SET solde = solde + 5000 WHERE id = 2;
+
+-- Si tout est cohérent
+COMMIT;
+-- Sinon
+-- ROLLBACK;</code></pre>
+    <table>
+      <thead><tr><th>Niveau d'isolation</th><th>Comportement</th></tr></thead>
+      <tbody>
+        <tr><td>READ UNCOMMITTED</td><td>Lit des données non validées (dirty read possible)</td></tr>
+        <tr><td>READ COMMITTED</td><td>Ne lit que les données validées</td></tr>
+        <tr><td>REPEATABLE READ</td><td>Défaut MySQL/InnoDB — lecture cohérente sur toute la transaction</td></tr>
+        <tr><td>SERIALIZABLE</td><td>Isolation totale, verrouillage maximal</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="num">05</span> Procédures stockées, fonctions, triggers</h2>
+    <pre><code>DELIMITER //
+CREATE TRIGGER maj_places_disponibles
+AFTER INSERT ON inscription
+FOR EACH ROW
+BEGIN
+  UPDATE cours SET places_restantes = places_restantes - 1
+  WHERE id = NEW.cours_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE inscrire_etudiant(IN p_etudiant INT, IN p_cours INT)
+BEGIN
+  DECLARE places INT;
+  SELECT places_restantes INTO places FROM cours WHERE id = p_cours;
+  IF places > 0 THEN
+    INSERT INTO inscription(etudiant_id, cours_id) VALUES (p_etudiant, p_cours);
+  ELSE
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Plus de places disponibles';
+  END IF;
+END //
+DELIMITER ;</code></pre>
+
+    <h2><span class="num">06</span> Vues</h2>
+    <pre><code>CREATE VIEW vue_moyennes_etudiants AS
+SELECT e.id, e.nom, AVG(n.valeur) AS moyenne
+FROM etudiant e
+JOIN note n ON n.etudiant_id = e.id
+GROUP BY e.id, e.nom;</code></pre>
+
+    <h2><span class="num">07</span> Optimisation de requêtes</h2>
+    <ul>
+      <li>Éviter <code>SELECT *</code> — ne sélectionner que les colonnes nécessaires.</li>
+      <li>Utiliser <code>EXPLAIN ANALYZE</code> systématiquement sur une requête lente.</li>
+      <li>Préférer les <code>JOIN</code> explicites aux sous-requêtes corrélées quand c'est possible.</li>
+      <li>Activer et consulter le <em>slow query log</em> en développement.</li>
+    </ul>
+    <pre><code>-- Activer le slow query log
+SET GLOBAL slow_query_log = 'ON';
+SET GLOBAL long_query_time = 1;</code></pre>
+
+    <h2><span class="num">08</span> Sécurité</h2>
+    <pre><code>CREATE USER 'app_sga'@'%' IDENTIFIED BY 'mot_de_passe_fort';
+GRANT SELECT, INSERT, UPDATE ON sga.* TO 'app_sga'@'%';
+REVOKE DELETE ON sga.* FROM 'app_sga'@'%';
+FLUSH PRIVILEGES;</code></pre>
+
+    <div class="callout info">
+      <span class="label">Pour aller plus loin (si le temps le permet)</span>
+      Partitionnement de table (<code>PARTITION BY RANGE</code>), réplication master-slave basique, colonnes JSON natives MySQL.
+    </div>
+
+
+    <div class="page-nav">
+      <a href="tp4-uml-etats-deploiement.html">&laquo; TP4 — États & Déploiement</a>
+      <a class="next" href="projet-sga.html">Projet réel — SGA &raquo;</a>
+    </div>
+
+    <footer class="site-footer">
+      <span class="prompt">guest@schadrac-moualou-bacleche-bdd:~$</span> echo "Formation Bases de Données Avancées "
+    </footer>
+  </main>
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>

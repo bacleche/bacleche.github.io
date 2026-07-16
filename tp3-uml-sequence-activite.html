@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP3 — Séquence & Activité :: Formation BDD Avancées</title>
+<meta name="description" content="Diagramme de séquence et diagramme d'activité : interactions et logique des processus métier.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <button class="nav-toggle">[ + ] menu du cours</button>
+    <div class="nav-body">
+      <span class="brand">FORMATION<span class="dot">::</span>BDD_AVANCEES</span>
+      <span class="brand-sub">L3 — Université 2i</span>
+
+      <div class="nav-label">// Partie 1 — Conception UML</div>
+      <ul class="nav-list">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="configuration-environnement-bdd.html">Configuration environnement</a></li>
+        <li><a href="tp1-uml-cas-utilisation.html">TP1 — Cas d'utilisation</a></li>
+        <li><a href="tp2-uml-classes.html">TP2 — Diagramme de classes</a></li>
+        <li><a href="tp3-uml-sequence-activite.html" class="active">TP3 — Séquence & Activité</a></li>
+        <li><a href="tp4-uml-etats-deploiement.html">TP4 — États & Déploiement</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 2 — Optimisation MySQL</div>
+      <ul class="nav-list">
+        <li><a href="cours-bdd-notions-avancees.html">Bases de données avancées</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 3 — Mise en pratique</div>
+      <ul class="nav-list">
+        <li><a href="projet-sga.html">Projet réel — SGA</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <div class="termbar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="path">guest@2i-bdd<b>:~/tp3</b>$<span class="cursor"></span></span>
+    </div>
+    <header class="page-head">
+      <p class="eyebrow">Semaine 2 · Partie 1 — Conception UML</p>
+      <h1>Diagrammes de séquence &amp; d'activité</h1>
+      <p class="subtitle">La dynamique du système : interactions entre objets et logique des processus métier.</p>
+    </header>
+
+
+    <p class="dim">Deux diagrammes complémentaires pour la dynamique du système : le diagramme de séquence pour les interactions objet-à-objet, le diagramme d'activité pour la logique des processus métier.</p>
+
+    <h2><span class="num">01</span> Diagramme de séquence</h2>
+    <div class="panel">
+      <p class="panel-title">Pourquoi il est nécessaire</p>
+      <p>Il valide qu'un cas d'utilisation est réalisable techniquement et révèle les méthodes manquantes dans le diagramme de classes. On le construit à partir d'<strong>un seul scénario précis</strong> — jamais de l'ensemble du système d'un coup.</p>
+    </div>
+
+    <h3>Éléments</h3>
+    <table>
+      <thead><tr><th>Élément</th><th>Notation</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td>Ligne de vie</td><td>Ligne pointillée verticale</td><td>Représente un objet dans le temps (haut → bas)</td></tr>
+        <tr><td>Message synchrone</td><td>Flèche pleine</td><td>Appel de méthode qui attend une réponse</td></tr>
+        <tr><td>Message asynchrone</td><td>Flèche ouverte</td><td>Appel sans attente de retour immédiat</td></tr>
+        <tr><td>Retour</td><td>Flèche pointillée</td><td>Réponse renvoyée à l'appelant</td></tr>
+        <tr><td>Activation</td><td>Rectangle fin sur la ligne de vie</td><td>Durée pendant laquelle l'objet est actif</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Exemple — PlantUML</h3>
+    <pre><code>@startuml
+actor Etudiant
+participant "Interface" as UI
+participant "ServiceInscription" as SVC
+database "BDD" as DB
+
+Etudiant -> UI : demanderInscription(cours)
+UI -> SVC : sInscrire(etudiant, cours)
+SVC -> DB : verifierPlacesDisponibles(cours)
+DB --> SVC : placesRestantes
+SVC -> DB : creerInscription(etudiant, cours)
+DB --> SVC : confirmation
+SVC --> UI : inscriptionValidee
+UI --> Etudiant : afficherConfirmation()
+@enduml</code></pre>
+
+    <h2><span class="num">02</span> Diagramme d'activité</h2>
+    <div class="panel">
+      <p class="panel-title">Pourquoi il est nécessaire</p>
+      <p>Utile dès qu'un processus métier comporte des décisions, des boucles, ou des étapes parallèles (ex : workflow de validation d'une inscription avec vérification de prérequis).</p>
+    </div>
+
+    <h3>Éléments</h3>
+    <table>
+      <thead><tr><th>Élément</th><th>Notation</th></tr></thead>
+      <tbody>
+        <tr><td>Nœud de début / fin</td><td>Cercle plein / cercle bordé</td></tr>
+        <tr><td>Action</td><td>Rectangle à coins arrondis</td></tr>
+        <tr><td>Décision</td><td>Losange</td></tr>
+        <tr><td>Fork / Join (parallélisme)</td><td>Barre noire épaisse</td></tr>
+        <tr><td>Couloir (swimlane)</td><td>Colonne verticale par acteur</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Exemple — PlantUML</h3>
+    <pre><code>@startuml
+start
+:Étudiant soumet une demande d'inscription;
+if (Prérequis validés ?) then (oui)
+  if (Places disponibles ?) then (oui)
+    :Créer l'inscription;
+    :Envoyer confirmation;
+  else (non)
+    :Ajouter en liste d'attente;
+  endif
+else (non)
+  :Rejeter la demande;
+endif
+stop
+@enduml</code></pre>
+
+    <div class="callout">
+      <span class="label">Comment choisir entre les deux</span>
+      Séquence = "quels objets s'échangent quoi, dans quel ordre technique". Activité = "quelle est la logique métier avec ses conditions". Un même scénario peut avoir les deux, à des fins différentes.
+    </div>
+
+    <h2><span class="num">03</span> Exercice pratique</h2>
+    <div class="panel">
+      <p class="panel-title">À rendre en fin de séance</p>
+      <p>Diagramme de séquence : scénario "un enseignant saisit une note". Diagramme d'activité : processus "traitement d'une inscription" avec au moins une décision et un cas de rejet.</p>
+    </div>
+
+
+    <div class="page-nav">
+      <a href="tp2-uml-classes.html">&laquo; TP2 — Diagramme de classes</a>
+      <a class="next" href="tp4-uml-etats-deploiement.html">TP4 — États & Déploiement &raquo;</a>
+    </div>
+
+    <footer class="site-footer">
+      <span class="prompt">guest@schadrac-moualou-bacleche-bdd:~$</span> echo "Formation Bases de Données Avancées "
+    </footer>
+  </main>
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>

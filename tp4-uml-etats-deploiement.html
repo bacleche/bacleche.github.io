@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP4 — États & Déploiement :: Formation BDD Avancées</title>
+<meta name="description" content="Diagramme d'états-transitions et diagramme de déploiement : cycle de vie et architecture physique.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <button class="nav-toggle">[ + ] menu du cours</button>
+    <div class="nav-body">
+      <span class="brand">FORMATION<span class="dot">::</span>BDD_AVANCEES</span>
+      <span class="brand-sub">L3 — Université 2i</span>
+
+      <div class="nav-label">// Partie 1 — Conception UML</div>
+      <ul class="nav-list">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="configuration-environnement-bdd.html">Configuration environnement</a></li>
+        <li><a href="tp1-uml-cas-utilisation.html">TP1 — Cas d'utilisation</a></li>
+        <li><a href="tp2-uml-classes.html">TP2 — Diagramme de classes</a></li>
+        <li><a href="tp3-uml-sequence-activite.html">TP3 — Séquence & Activité</a></li>
+        <li><a href="tp4-uml-etats-deploiement.html" class="active">TP4 — États & Déploiement</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 2 — Optimisation MySQL</div>
+      <ul class="nav-list">
+        <li><a href="cours-bdd-notions-avancees.html">Bases de données avancées</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 3 — Mise en pratique</div>
+      <ul class="nav-list">
+        <li><a href="projet-sga.html">Projet réel — SGA</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <div class="termbar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="path">guest@2i-bdd<b>:~/tp4</b>$<span class="cursor"></span></span>
+    </div>
+    <header class="page-head">
+      <p class="eyebrow">Semaine 2 · Partie 1 — Conception UML</p>
+      <h1>Diagrammes d'états &amp; de déploiement</h1>
+      <p class="subtitle">Cycle de vie des objets, puis architecture physique du système — la transition vers la conception architecturale.</p>
+    </header>
+
+
+    <p class="dim">Derniers diagrammes du cheminement — on referme la conception objet (états) et on bascule vers la conception architecturale (déploiement).</p>
+
+    <h2><span class="num">01</span> Diagramme d'états-transitions</h2>
+    <div class="panel">
+      <p class="panel-title">Pourquoi il est nécessaire</p>
+      <p>Indispensable dès qu'un objet possède un <strong>statut</strong> qui évolue dans le temps selon des événements précis. Un seul diagramme par entité qui a un cycle de vie clair — pas besoin d'en faire un pour chaque classe.</p>
+    </div>
+
+    <h3>Éléments</h3>
+    <table>
+      <thead><tr><th>Élément</th><th>Notation</th></tr></thead>
+      <tbody>
+        <tr><td>État</td><td>Rectangle à coins arrondis</td></tr>
+        <tr><td>Transition</td><td>Flèche étiquetée par l'événement déclencheur</td></tr>
+        <tr><td>État initial / final</td><td>Cercle plein / cercle bordé</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Exemple — PlantUML</h3>
+    <pre><code>@startuml
+[*] --> EnAttente
+EnAttente --> Validee : validerInscription()
+EnAttente --> Annulee : annuler()
+Validee --> Terminee : cloreSemestre()
+Validee --> Annulee : annuler()
+Terminee --> [*]
+Annulee --> [*]
+@enduml</code></pre>
+
+    <h2><span class="num">02</span> Diagramme de déploiement — la conception architecturale</h2>
+    <div class="panel">
+      <p class="panel-title">Pourquoi il est nécessaire</p>
+      <p>C'est ici qu'on quitte la conception objet pour l'architecture physique : où tourne quoi, et comment les composants communiquent. C'est le pont direct vers l'infrastructure réelle — exactement ce que vous configurez déjà quand vous déployez sur Vercel, Railway ou o2switch.</p>
+    </div>
+
+    <h3>Éléments</h3>
+    <table>
+      <thead><tr><th>Élément</th><th>Notation</th><th>Exemple concret</th></tr></thead>
+      <tbody>
+        <tr><td>Nœud</td><td>Cube 3D</td><td>Serveur, conteneur, poste client</td></tr>
+        <tr><td>Artefact</td><td>Rectangle avec icône document</td><td>L'application qui tourne sur le nœud</td></tr>
+        <tr><td>Lien de communication</td><td>Trait entre nœuds</td><td>Protocole utilisé (HTTPS, TCP)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Exemple — architecture d'un projet réel</h3>
+    <pre><code>@startuml
+node "Vercel" {
+  artifact "Frontend Next.js"
+}
+node "Railway" {
+  artifact "Backend Django/DRF"
+}
+node "PostgreSQL (Railway)" {
+  artifact "Base de données"
+}
+"Frontend Next.js" --> "Backend Django/DRF" : HTTPS / REST API
+"Backend Django/DRF" --> "Base de données" : SQL
+@enduml</code></pre>
+
+    <div class="callout info">
+      <span class="label">Lien avec votre pratique</span>
+      Ce diagramme, c'est littéralement le schéma d'architecture de PRESF ARCHIVIS ou LogiTrack. Les étudiants qui verront ce diagramme comprendront immédiatement pourquoi le frontend et le backend sont déployés séparément.
+    </div>
+
+    <h2><span class="num">03</span> Exercice pratique</h2>
+    <div class="panel">
+      <p class="panel-title">À rendre en fin de séance</p>
+      <p>Diagramme d'états pour l'entité <code>Inscription</code> du SGA (au moins 4 états). Diagramme de déploiement pour une architecture Next.js + Django + MySQL avec hébergement au choix.</p>
+    </div>
+
+
+    <div class="page-nav">
+      <a href="tp3-uml-sequence-activite.html">&laquo; TP3 — Séquence & Activité</a>
+      <a class="next" href="cours-bdd-notions-avancees.html">Bases de données avancées &raquo;</a>
+    </div>
+
+    <footer class="site-footer">
+      <span class="prompt">guest@schadrac-moualou-bacleche-bdd:~$</span> echo "Formation Bases de Données Avancées "
+    </footer>
+  </main>
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>

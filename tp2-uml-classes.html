@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP2 — Diagramme de classes :: Formation BDD Avancées</title>
+<meta name="description" content="Diagramme de classes : attributs, relations, cardinalités et passage vers le schéma relationnel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <button class="nav-toggle">[ + ] menu du cours</button>
+    <div class="nav-body">
+      <span class="brand">FORMATION<span class="dot">::</span>BDD_AVANCEES</span>
+      <span class="brand-sub">L3 — Université 2i</span>
+
+      <div class="nav-label">// Partie 1 — Conception UML</div>
+      <ul class="nav-list">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="configuration-environnement-bdd.html">Configuration environnement</a></li>
+        <li><a href="tp1-uml-cas-utilisation.html">TP1 — Cas d'utilisation</a></li>
+        <li><a href="tp2-uml-classes.html" class="active">TP2 — Diagramme de classes</a></li>
+        <li><a href="tp3-uml-sequence-activite.html">TP3 — Séquence & Activité</a></li>
+        <li><a href="tp4-uml-etats-deploiement.html">TP4 — États & Déploiement</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 2 — Optimisation MySQL</div>
+      <ul class="nav-list">
+        <li><a href="cours-bdd-notions-avancees.html">Bases de données avancées</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 3 — Mise en pratique</div>
+      <ul class="nav-list">
+        <li><a href="projet-sga.html">Projet réel — SGA</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <div class="termbar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="path">guest@2i-bdd<b>:~/tp2</b>$<span class="cursor"></span></span>
+    </div>
+    <header class="page-head">
+      <p class="eyebrow">Semaine 1 · Partie 1 — Conception UML</p>
+      <h1>Diagramme de classes</h1>
+      <p class="subtitle">Le diagramme pivot : structure du domaine et futur schéma de base de données.</p>
+    </header>
+
+
+    <p class="dim">Le diagramme le plus important du cours. C'est celui qui se transforme directement en schéma de base de données — le pont entre conception objet et implémentation SQL.</p>
+
+    <h2><span class="num">01</span> Pourquoi il est central</h2>
+    <div class="panel">
+      <p class="panel-title">Le problème qu'il résout</p>
+      <p>Il fige la structure statique du domaine : quelles entités existent, quels attributs elles portent, comment elles se relient. Toute la partie 2 du cours (bases de données avancées) part de ce diagramme.</p>
+    </div>
+
+    <h2><span class="num">02</span> Anatomie d'une classe</h2>
+    <pre><code>+----------------------------+
+|          Etudiant          |   &lt;- nom de la classe
++----------------------------+
+| - id: int                  |   &lt;- attributs (- privé, + public)
+| - nom: string               |
+| - email: string             |
++----------------------------+
+| + sInscrire(cours: Cours)  |   &lt;- méthodes
++----------------------------+</code></pre>
+
+    <h2><span class="num">03</span> Les relations entre classes</h2>
+    <table>
+      <thead><tr><th>Relation</th><th>Notation</th><th>Exemple</th><th>Traduction en BDD</th></tr></thead>
+      <tbody>
+        <tr><td>Association</td><td>Trait simple + cardinalités</td><td>Étudiant — Cours</td><td>Clé étrangère ou table de jonction</td></tr>
+        <tr><td>Agrégation</td><td>Losange vide</td><td>Département ◇— Enseignant</td><td>Clé étrangère (l'enfant peut exister sans le parent)</td></tr>
+        <tr><td>Composition</td><td>Losange plein</td><td>Commande ◆— LigneCommande</td><td>Clé étrangère + <code>ON DELETE CASCADE</code></td></tr>
+        <tr><td>Héritage</td><td>Flèche triangle vide</td><td>Utilisateur ▷ Etudiant / Enseignant</td><td>Table par sous-classe, ou table unique + discriminant</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Cardinalités à connaître</h3>
+    <p><span class="pill">1</span><span class="pill">0..1</span><span class="pill">1..*</span><span class="pill">0..*</span><span class="pill">N..M</span></p>
+
+    <h2><span class="num">04</span> Méthode de construction</h2>
+    <ol>
+      <li>Repérer les noms communs importants du cahier des charges → candidats classes.</li>
+      <li>Pour chaque classe, lister ses attributs propres (pas ceux d'une autre classe).</li>
+      <li>Relier les classes entre elles et poser les cardinalités des deux côtés.</li>
+      <li>Ajouter les méthodes qui ont du sens au niveau métier (pas les getters/setters).</li>
+      <li>Vérifier qu'aucune classe ne fait double emploi (signe de mauvaise normalisation à venir).</li>
+    </ol>
+
+    <h2><span class="num">05</span> Passage classe → table (aperçu, détaillé en partie 2)</h2>
+    <div class="callout info">
+      <span class="label">Règle de passage</span>
+      1 classe = 1 table · 1 attribut = 1 colonne · association 1–N = clé étrangère côté N · association N–N = table de jonction avec deux clés étrangères.
+    </div>
+
+    <h2><span class="num">06</span> Exemple — PlantUML</h2>
+    <pre><code>@startuml
+class Etudiant {
+  -id: int
+  -nom: string
+  -email: string
+  +sInscrire(cours: Cours)
+}
+class Cours {
+  -id: int
+  -titre: string
+  -credits: int
+}
+class Enseignant {
+  -id: int
+  -nom: string
+}
+Etudiant "1..*" -- "1..*" Cours : suit
+Enseignant "1" -- "0..*" Cours : enseigne
+@enduml</code></pre>
+
+    <h2><span class="num">07</span> Exercice pratique</h2>
+    <div class="panel">
+      <p class="panel-title">À rendre en fin de séance</p>
+      <p>Construisez le diagramme de classes complet du Système de Gestion Académique (projet fil rouge) : Etudiant, Enseignant, Cours, Inscription, Note. Identifiez une relation d'héritage et une association N–N.</p>
+    </div>
+
+
+    <div class="page-nav">
+      <a href="tp1-uml-cas-utilisation.html">&laquo; TP1 — Cas d'utilisation</a>
+      <a class="next" href="tp3-uml-sequence-activite.html">TP3 — Séquence & Activité &raquo;</a>
+    </div>
+
+    <footer class="site-footer">
+      <span class="prompt">guest@schadrac-moualou-bacleche-bdd:~$</span> echo "Formation Bases de Données Avancées "
+    </footer>
+  </main>
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>

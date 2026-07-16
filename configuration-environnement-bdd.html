@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuration environnement :: Formation BDD Avancées</title>
+<meta name="description" content="Installer les outils nécessaires (draw.io, PlantUML, MySQL) sur Windows comme sur Linux.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <button class="nav-toggle">[ + ] menu du cours</button>
+    <div class="nav-body">
+      <span class="brand">FORMATION<span class="dot">::</span>BDD_AVANCEES</span>
+      <span class="brand-sub">L3 — Université 2i</span>
+
+      <div class="nav-label">// Partie 1 — Conception UML</div>
+      <ul class="nav-list">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="configuration-environnement-bdd.html" class="active">Configuration environnement</a></li>
+        <li><a href="tp1-uml-cas-utilisation.html">TP1 — Cas d'utilisation</a></li>
+        <li><a href="tp2-uml-classes.html">TP2 — Diagramme de classes</a></li>
+        <li><a href="tp3-uml-sequence-activite.html">TP3 — Séquence & Activité</a></li>
+        <li><a href="tp4-uml-etats-deploiement.html">TP4 — États & Déploiement</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 2 — Optimisation MySQL</div>
+      <ul class="nav-list">
+        <li><a href="cours-bdd-notions-avancees.html">Bases de données avancées</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 3 — Mise en pratique</div>
+      <ul class="nav-list">
+        <li><a href="projet-sga.html">Projet réel — SGA</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <div class="termbar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="path">guest@2i-bdd<b>:~/setup</b>$<span class="cursor"></span></span>
+    </div>
+    <header class="page-head">
+      <p class="eyebrow">Prérequis</p>
+      <h1>Configuration de l'environnement</h1>
+      <p class="subtitle">Installez les outils de modélisation UML et MySQL avant de commencer le TP1.</p>
+    </header>
+
+
+    <p class="dim">Deux familles d'outils à installer avant de commencer : un outil de modélisation UML, et MySQL pour la partie base de données. Tout est gratuit et disponible sur Linux comme sur Windows.</p>
+
+    <h2><span class="num">01</span> Outils de modélisation UML</h2>
+    <table>
+      <thead>
+        <tr><th>Outil</th><th>Type</th><th>Linux</th><th>Windows</th><th>Usage recommandé</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>draw.io</strong> (diagrams.net)</td>
+          <td>Visuel, glisser-déposer</td>
+          <td>AppImage ou navigateur</td>
+          <td>.exe ou navigateur</td>
+          <td>Pour débuter — TP1 à TP2</td>
+        </tr>
+        <tr>
+          <td><strong>PlantUML</strong></td>
+          <td>UML en texte (diagram-as-code)</td>
+          <td>VS Code + JRE + Graphviz</td>
+          <td>VS Code + JRE + Graphviz</td>
+          <td>Versionner ses diagrammes dans Git — à partir de TP2</td>
+        </tr>
+        <tr>
+          <td><strong>StarUML</strong></td>
+          <td>Suite UML complète</td>
+          <td>.deb / AppImage</td>
+          <td>.exe</td>
+          <td>Optionnel — pour aller plus loin</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Installation de draw.io</h3>
+    <p class="dim">Aucune installation n'est strictement nécessaire — la version web fonctionne identiquement sur les deux OS.</p>
+    <pre><code># Version web (recommandée, zéro installation)
+# -> https://app.diagrams.net
+
+# Version desktop Linux (AppImage)
+wget https://github.com/jgraph/drawio-desktop/releases/latest/download/drawio-x86_64.AppImage
+chmod +x drawio-x86_64.AppImage
+./drawio-x86_64.AppImage
+
+# Version desktop Windows
+# -> Télécharger le .exe depuis https://github.com/jgraph/drawio-desktop/releases</code></pre>
+
+    <h3>Installation de PlantUML</h3>
+    <pre><code># --- Linux (Debian/Ubuntu) ---
+sudo apt update
+sudo apt install -y default-jre graphviz
+# Puis dans VS Code : Extensions -> rechercher "PlantUML" (auteur: jebbs) -> Installer
+
+# --- Windows ---
+# 1. Installer Java : https://www.java.com/fr/download/
+# 2. Installer Graphviz : https://graphviz.org/download/
+# 3. VS Code -> Extensions -> "PlantUML" (jebbs) -> Installer
+
+# Vérification (les deux OS, dans un terminal)
+java -version
+dot -V</code></pre>
+
+    <div class="callout info">
+      <span class="label">Réflexe éditeur</span>
+      Dans VS Code, avec l'extension installée : <code>Alt+D</code> (Linux/Windows) ouvre l'aperçu live d'un fichier <code>.puml</code>. Le diagramme se redessine à chaque sauvegarde.
+    </div>
+
+    <h2><span class="num">02</span> MySQL</h2>
+    <pre><code># --- Linux (Debian/Ubuntu) ---
+sudo apt update
+sudo apt install -y mysql-server mysql-client
+sudo systemctl enable --now mysql
+sudo mysql_secure_installation
+
+# Client graphique (les deux OS)
+# -> MySQL Workbench : https://dev.mysql.com/downloads/workbench/
+
+# --- Windows ---
+# -> Télécharger "MySQL Installer for Windows" :
+#    https://dev.mysql.com/downloads/installer/
+# -> Cocher "MySQL Server" + "MySQL Workbench" pendant l'installation</code></pre>
+
+    <h3>Vérifier que tout fonctionne</h3>
+    <pre><code>mysql -u root -p
+mysql&gt; SELECT VERSION();
+mysql&gt; SHOW DATABASES;</code></pre>
+
+    <p class="pill">draw.io</p><p class="pill" style="display:inline-block">PlantUML</p><p class="pill" style="display:inline-block">MySQL 8+</p><p class="pill" style="display:inline-block">MySQL Workbench</p>
+
+
+    <div class="page-nav">
+      <a href="index.html">&laquo; Accueil</a>
+      <a class="next" href="tp1-uml-cas-utilisation.html">TP1 — Cas d'utilisation &raquo;</a>
+    </div>
+
+    <footer class="site-footer">
+      <span class="prompt">guest@schadrac-moualou-bacleche-bdd:~$</span> echo "Formation Bases de Données Avancées "
+    </footer>
+  </main>
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>

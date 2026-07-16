@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projet réel — SGA :: Formation BDD Avancées</title>
+<meta name="description" content="Projet fil rouge : Système de Gestion Académique, de l'UML au SQL optimisé.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <button class="nav-toggle">[ + ] menu du cours</button>
+    <div class="nav-body">
+      <span class="brand">FORMATION<span class="dot">::</span>BDD_AVANCEES</span>
+      <span class="brand-sub">L3 — Université 2i</span>
+
+      <div class="nav-label">// Partie 1 — Conception UML</div>
+      <ul class="nav-list">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="configuration-environnement-bdd.html">Configuration environnement</a></li>
+        <li><a href="tp1-uml-cas-utilisation.html">TP1 — Cas d'utilisation</a></li>
+        <li><a href="tp2-uml-classes.html">TP2 — Diagramme de classes</a></li>
+        <li><a href="tp3-uml-sequence-activite.html">TP3 — Séquence & Activité</a></li>
+        <li><a href="tp4-uml-etats-deploiement.html">TP4 — États & Déploiement</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 2 — Optimisation MySQL</div>
+      <ul class="nav-list">
+        <li><a href="cours-bdd-notions-avancees.html">Bases de données avancées</a></li>
+      </ul>
+
+      <div class="nav-label">// Partie 3 — Mise en pratique</div>
+      <ul class="nav-list">
+        <li><a href="projet-sga.html" class="active">Projet réel — SGA</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <div class="termbar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="path">guest@2i-bdd<b>:~/projet</b>$<span class="cursor"></span></span>
+    </div>
+    <header class="page-head">
+      <p class="eyebrow">Semaine 4 · Partie 3 — Mise en pratique</p>
+      <h1>Projet réel — Système de Gestion Académique</h1>
+      <p class="subtitle">Mettre en application l'ensemble du cheminement : UML complet, schéma relationnel, optimisation MySQL.</p>
+    </header>
+
+
+    <p class="dim">Projet fil rouge de la formation : un Système de Gestion Académique (SGA), construit de bout en bout — de l'UML au SQL optimisé.</p>
+
+    <h2><span class="num">01</span> Pourquoi ce projet</h2>
+    <div class="panel">
+      <p class="panel-title">Contexte volontairement choisi</p>
+      <p>C'est le propre contexte des étudiants (l'université elle-même). Il couvre naturellement une association N–N (étudiant–cours), un héritage possible (utilisateur → étudiant/enseignant), un cycle de vie clair (statut d'inscription), et assez de volumétrie pour justifier l'indexation et l'optimisation.</p>
+    </div>
+
+    <h2><span class="num">02</span> Périmètre fonctionnel</h2>
+    <ul>
+      <li>Un étudiant peut s'inscrire à plusieurs cours (dans la limite des places disponibles).</li>
+      <li>Un enseignant saisit les notes de ses cours.</li>
+      <li>Le système calcule automatiquement les moyennes.</li>
+      <li>Une inscription suit un cycle de vie : en attente → validée → terminée / annulée.</li>
+    </ul>
+
+    <h2><span class="num">03</span> Livrables attendus, dans l'ordre du cheminement UML</h2>
+    <table>
+      <thead><tr><th>#</th><th>Livrable</th><th>Diagramme / outil concerné</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Diagramme de cas d'utilisation complet</td><td>TP1</td></tr>
+        <tr><td>2</td><td>Diagramme de classes complet</td><td>TP2</td></tr>
+        <tr><td>3</td><td>Un diagramme de séquence + un diagramme d'activité</td><td>TP3</td></tr>
+        <tr><td>4</td><td>Diagramme d'états (Inscription) + diagramme de déploiement</td><td>TP4</td></tr>
+        <tr><td>5</td><td>MCD → MLD → MPD, script SQL de création</td><td>Bases de données avancées</td></tr>
+        <tr><td>6</td><td>Au moins 2 index justifiés, 1 procédure stockée, 1 trigger, 1 vue</td><td>Bases de données avancées</td></tr>
+        <tr><td>7</td><td>3 requêtes optimisées avec preuve <code>EXPLAIN ANALYZE</code> avant/après</td><td>Bases de données avancées</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="num">04</span> Script de départ — structure des tables</h2>
+    <pre><code>CREATE TABLE utilisateur (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nom VARCHAR(100) NOT NULL,
+  email VARCHAR(150) UNIQUE NOT NULL,
+  role ENUM('etudiant','enseignant') NOT NULL
+);
+
+CREATE TABLE cours (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  titre VARCHAR(150) NOT NULL,
+  credits INT NOT NULL,
+  places_restantes INT NOT NULL,
+  enseignant_id INT,
+  FOREIGN KEY (enseignant_id) REFERENCES utilisateur(id)
+);
+
+CREATE TABLE inscription (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  etudiant_id INT NOT NULL,
+  cours_id INT NOT NULL,
+  statut ENUM('en_attente','validee','terminee','annulee') DEFAULT 'en_attente',
+  date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (etudiant_id) REFERENCES utilisateur(id),
+  FOREIGN KEY (cours_id) REFERENCES cours(id),
+  UNIQUE KEY uniq_inscription (etudiant_id, cours_id)
+);
+
+CREATE TABLE note (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  inscription_id INT NOT NULL,
+  valeur DECIMAL(4,2) NOT NULL,
+  FOREIGN KEY (inscription_id) REFERENCES inscription(id)
+);</code></pre>
+
+    <h2><span class="num">05</span> Critères d'évaluation</h2>
+    <ul>
+      <li>Cohérence entre le diagramme de classes et le schéma SQL final.</li>
+      <li>Justification écrite de chaque index (quelle requête il accélère, pourquoi).</li>
+      <li>Transaction correctement utilisée sur l'opération d'inscription (vérification places + insertion atomique).</li>
+      <li>Preuve mesurable d'optimisation (temps d'exécution ou plan <code>EXPLAIN</code> avant/après).</li>
+    </ul>
+
+    <div class="callout info">
+      <span class="label">Extension possible</span>
+      Les groupes qui terminent en avance peuvent brancher un backend Django/DRF ou une API Next.js sur ce schéma — cohérent avec ce que vous utilisez déjà sur vos propres projets.
+    </div>
+
+
+    <div class="page-nav">
+      <a href="cours-bdd-notions-avancees.html">&laquo; Bases de données avancées</a>
+      <a class="next" href="projet-sga.html">Projet réel — SGA &raquo;</a>
+    </div>
+
+    <footer class="site-footer">
+      <span class="prompt">guest@schadrac-moualou-bacleche-bdd:~$</span> echo "Formation Bases de Données Avancées "
+    </footer>
+  </main>
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>
