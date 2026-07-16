@@ -367,8 +367,29 @@ footer.site-footer .prompt { color: var(--accent-dim); }
   margin-bottom: 10px;
   cursor: pointer;
 }
-@media (max-width: 860px) {
+/* @media (max-width: 860px) {
   .nav-toggle { display: inline-block; }
   .nav-body { display: none; }
   .nav-body.open { display: block; }
+} */
+
+
+/* Dans votre @media (max-width: 860px) */
+@media (max-width: 860px) {
+  .sidebar { 
+    position: static; 
+    height: auto; 
+    border-right: none; 
+    border-bottom: 1px solid var(--border);
+    padding: 15px; /* Réduit un peu le padding sur mobile */
+  }
+
+  .nav-body { 
+    display: none; /* Caché par défaut */
+  }
+  
+  .nav-body.open { 
+    display: block; /* Affiche uniquement quand ouvert */
+    margin-top: 15px;
+  }
 }
